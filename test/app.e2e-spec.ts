@@ -23,15 +23,11 @@ describe('AppController (e2e)', () => {
   });
 
   it('/products/blah (GET) fails on invalid non-number ID', () => {
-    return request(app.getHttpServer())
-      .get('/products/blah')
-      .expect(400);
+    return request(app.getHttpServer()).get('/products/blah').expect(400);
   });
 
   it('/reviews/blah (GET) fails on invalid non-number ID', () => {
-    return request(app.getHttpServer())
-      .get('/reviews/blah')
-      .expect(400);
+    return request(app.getHttpServer()).get('/reviews/blah').expect(400);
   });
 
   it('create product with supported fields', () => {

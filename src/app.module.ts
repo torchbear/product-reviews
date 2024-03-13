@@ -5,6 +5,7 @@ import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './products/entities/product.entity';
+import { Review } from './reviews/entities/review.entity';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { Product } from './products/entities/product.entity';
       username: 'root',
       password: 'example',
       database: 'product_reviews',
-      entities: [Product],
+      entities: [Product, Review],
       synchronize: true,
     }),
   ],

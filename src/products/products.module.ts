@@ -2,8 +2,7 @@ import { Module } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 import { Product } from './entities/product.entity';
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product])],

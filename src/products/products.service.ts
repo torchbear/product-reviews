@@ -13,7 +13,11 @@ export class ProductsService {
   ) {}
 
   create(createProductDto: CreateProductDto) {
-    return this.productsRepository.insert(createProductDto);
+    const product = new Product();
+    product.name = createProductDto.name;
+    product.description = createProductDto.description;
+    product.price = createProductDto.price;
+    return this.productsRepository.insert(product);
   }
 
   findAll() {
@@ -25,7 +29,18 @@ export class ProductsService {
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
-    return this.productsRepository.update(id, updateProductDto);
+    const product = new Product();
+    product.id = id;
+    if (updateProductDto.name != null) {
+      product.name = updateProductDto.name;
+    }
+    if (updateProductDto.description != null) {
+      product.description = updateProductDto.description;
+    }
+    if (updateProductDto.price != null) {
+      product.price = updateProductDto.price;
+    }
+    return this.productsRepository.update(id, product);
   }
 
   async remove(id: number) {

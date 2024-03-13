@@ -1,12 +1,16 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
+import { ReviewsService } from './reviews/reviews.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private reviewsService: ReviewsService,
+  ) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('/')
+  async showReviews() {
+    return this.reviewsService.findAll();
   }
 }

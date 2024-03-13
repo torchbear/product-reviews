@@ -1,6 +1,9 @@
 import { IsString, IsInt } from 'class-validator';
 
-export class CreateReviewDto {
+export class GetReviewDto {
+  @IsInt()
+  id: number;
+
   @IsString()
   firstName: string;
 

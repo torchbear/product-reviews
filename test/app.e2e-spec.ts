@@ -33,4 +33,31 @@ describe('AppController (e2e)', () => {
       .get('/reviews/blah')
       .expect(400);
   });
+
+  it('create product with supported fields', () => {
+    return request(app.getHttpServer())
+      .post('/products')
+      .send({ name: 'test', description: 'test', price: 1 })
+      .expect(201);
+  });
+
+  it('create product with missing field', () => {
+    return request(app.getHttpServer())
+      .post('/products')
+      .send({ name: 'test', description: 'test' })
+      .expect(400);
+  });
+
+  // TODO improve validation to forbid not supported fields
+  // it('create product with not supported field', () => {
+  //   return request(app.getHttpServer())
+  //     .post('/products')
+  //     .send({
+  //       name: 'test',
+  //       description: 'test',
+  //       price: 1,
+  //       notSupported: 'test',
+  //     })
+  //     .expect(400);
+  // });
 });

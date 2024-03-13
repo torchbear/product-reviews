@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>App</title>
+  </head>
+  <body>
+    <h1>Reviews</h1>
+    </hr>
+    {{#each reviews}}
+    <p>
+      <b>Author:</b> {{ this.firstName }} {{ this.lastName }}</br>
+      <b>Product:</b> {{ this.product.name }}</br>
+      <b>Rating:</b> {{ this.rating }}</br>
+      <span>{{ this.text }}</span>
+    </p>
+    {{/each}}
+  </body>
+</html>

@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Render } from "@nestjs/common";
 import { AppService } from './app.service';
 import { ReviewsService } from './reviews/reviews.service';
 
@@ -10,7 +10,8 @@ export class AppController {
   ) {}
 
   @Get('/')
+  @Render('index')
   async showReviews() {
-    return this.reviewsService.findAll();
+    return { reviews: await this.reviewsService.findAll() };
   }
 }

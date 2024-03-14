@@ -19,7 +19,20 @@
       "entryFile": "main",
       "sourceRoot": "apps/product-reviews/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/product-reviews/tsconfig.app.json"
+        "tsConfigPath": "apps/product-reviews/tsconfig.app.json",
+        "assets": [
+          {
+            "include": "../views",
+            "outDir": "dist/apps/product-reviews/views",
+            "watchAssets": true
+          },
+          {
+            "include": "../public",
+            "outDir": "dist/apps/product-reviews/public",
+            "watchAssets": true
+          }
+        ],
+        "watchAssets": true
       }
     },
     "review-processor": {

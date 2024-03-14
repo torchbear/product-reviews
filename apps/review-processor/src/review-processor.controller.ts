@@ -14,10 +14,7 @@ export class ReviewProcessorController {
   ) {}
 
   @MessagePattern('ratingUpdate')
-  async getNotifications(
-    @Payload() data: number[],
-    @Ctx() context: RmqContext,
-  ) {
+  async ratingUpdate(@Payload() data: number[], @Ctx() context: RmqContext) {
     console.log('Received:', data);
   }
 }

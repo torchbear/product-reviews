@@ -3,12 +3,22 @@ version: '3.1'
 
 services:
 
-  product:
+  product-reviews:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_product_reviews
     ports:
       - "3000:3000"
+
+  review-processor-1:
+    build:
+      context: .
+      dockerfile: Dockerfile_review_processor
+
+  review-processor-2:
+    build:
+      context: .
+      dockerfile: Dockerfile_review_processor
 
   rabbitmq:
     image: "rabbitmq:management-alpine"

@@ -39,3 +39,4 @@ $ npm run test:cov
 - return proper HTTP codes based on https://docs.devland.is/technical-overview/api-design-guide/rest-response
 - PATCH/PUT/DELETE in products/reviews controllers return directly DB results (hide them and return just HTTP code)
 - consider interceptor for caching https://docs.nestjs.com/interceptors#stream-overriding
+- extract entities to library to remove redundant definitions per app

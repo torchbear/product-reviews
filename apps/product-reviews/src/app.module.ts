@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './products/entities/product.entity';
 import { Review } from './reviews/entities/review.entity';
 import { ConfigModule } from '@nestjs/config';
+import { ProductRating } from './products/entities/product-rating.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { ConfigModule } from '@nestjs/config';
       username: `${process.env.DATABASE_USER}`,
       password: `${process.env.DATABASE_PASSWORD}`,
       database: 'product_reviews',
-      entities: [Product, Review],
+      entities: [Product, ProductRating, Review],
       synchronize: true,
     }),
   ],

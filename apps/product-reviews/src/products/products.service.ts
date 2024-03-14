@@ -21,11 +21,16 @@ export class ProductsService {
   }
 
   findAll() {
-    return this.productsRepository.find();
+    return this.productsRepository.find({
+      relations: ['rating'],
+    });
   }
 
   findOne(id: number) {
-    return this.productsRepository.findOneBy({ id });
+    return this.productsRepository.findOne({
+      where: { id: id },
+      relations: ['rating'],
+    });
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {

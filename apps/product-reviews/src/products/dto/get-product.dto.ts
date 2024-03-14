@@ -12,4 +12,7 @@ export class GetProductDto {
 
   @IsInt()
   price: number;
+
+  @IsInt()
+  rating: number;
 }

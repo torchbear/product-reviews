@@ -92,6 +92,7 @@ export class ProductsController {
     productDto.name = product.name;
     productDto.description = product.description;
     productDto.price = product.price;
+    productDto.rating = product.rating?.rating;
     return productDto;
   }
 }

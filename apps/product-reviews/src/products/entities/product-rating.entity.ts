@@ -16,6 +16,6 @@ export class ProductRating {
   @JoinColumn()
   product: Product;
 
-  @Column()
+  @Column('decimal', { precision: 3, scale: 2 })
   rating: number;
 }

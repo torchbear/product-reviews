@@ -19,7 +19,7 @@ export class Product {
   @Column()
   description: string;
 
-  @Column()
+  @Column('decimal', { precision: 10, scale: 2 })
   price: number;
 
   @OneToMany(() => Review, (review) => review.product)

@@ -4,7 +4,7 @@ import { ReviewsController } from './reviews.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [

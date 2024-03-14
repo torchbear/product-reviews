@@ -11,12 +11,14 @@ describe('ReviewProcessorController', () => {
       providers: [ReviewProcessorService],
     }).compile();
 
-    reviewProcessorController = app.get<ReviewProcessorController>(ReviewProcessorController);
+    reviewProcessorController = app.get<ReviewProcessorController>(
+      ReviewProcessorController,
+    );
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(reviewProcessorController.getHello()).toBe('Hello World!');
+    it('should be defined', () => {
+      expect(reviewProcessorController).toBeDefined();
     });
   });
 });

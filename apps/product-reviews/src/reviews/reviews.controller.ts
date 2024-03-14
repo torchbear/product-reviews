@@ -33,7 +33,7 @@ export class ReviewsController {
     return this.reviewsService
       .create(createReviewDto)
       .then((result) => {
-        this.client.emit('reviewCreated', [createReviewDto.productId]);
+        this.client.emit('ratingUpdate', [createReviewDto.productId]);
         return { id: result.identifiers[0].id };
       })
       .catch(() => {
@@ -87,7 +87,7 @@ export class ReviewsController {
         } else {
           updatedProducts = [review.product.id];
         }
-        this.client.emit('reviewUpdated', updatedProducts);
+        this.client.emit('ratingUpdate', updatedProducts);
         return this.reviewsService.update(id, updateReviewDto);
       })
       .catch(() => {
@@ -112,7 +112,7 @@ export class ReviewsController {
         } else {
           updatedProducts = [review.product.id];
         }
-        this.client.emit('reviewUpdated', updatedProducts);
+        this.client.emit('ratingUpdate', updatedProducts);
         return this.reviewsService.update(id, createReviewDto);
       })
       .catch(() => {
@@ -125,7 +125,7 @@ export class ReviewsController {
     return this.reviewsService
       .findOne(id)
       .then((review) => {
-        this.client.emit('reviewDeleted', [review.product.id]);
+        this.client.emit('ratingUpdate', [review.product.id]);
         return this.reviewsService.remove(id);
       })
       .catch(() => {

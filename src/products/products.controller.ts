@@ -66,7 +66,7 @@ export class ProductsController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateProductDto: UpdateProductDto,
+    @Body(new ValidationPipe()) updateProductDto: UpdateProductDto,
   ) {
     return this.productsService.update(id, updateProductDto);
   }
@@ -74,7 +74,7 @@ export class ProductsController {
   @Put(':id')
   put(
     @Param('id', ParseIntPipe) id: number,
-    @Body() createProductDto: CreateProductDto,
+    @Body(new ValidationPipe()) createProductDto: CreateProductDto,
   ) {
     return this.productsService.update(id, createProductDto);
   }

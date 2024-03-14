@@ -66,7 +66,7 @@ export class ReviewsController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateReviewDto: UpdateReviewDto,
+    @Body(new ValidationPipe()) updateReviewDto: UpdateReviewDto,
   ) {
     return this.reviewsService.update(id, updateReviewDto);
   }
@@ -74,7 +74,7 @@ export class ReviewsController {
   @Put(':id')
   put(
     @Param('id', ParseIntPipe) id: number,
-    @Body() createReviewDto: CreateReviewDto,
+    @Body(new ValidationPipe()) createReviewDto: CreateReviewDto,
   ) {
     return this.reviewsService.update(id, createReviewDto);
   }

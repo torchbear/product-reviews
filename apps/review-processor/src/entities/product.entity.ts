@@ -6,7 +6,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { ProductRating } from './product-rating.entity';
-import { Review } from "./review.entity";
+import { Review } from './review.entity';
 
 @Entity()
 export class Product {

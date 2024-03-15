@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ReviewProcessorController } from './review-processor.controller';
 import { ReviewProcessorService } from './review-processor.service';
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { Product } from "./entities/product.entity";
-import { ProductRating } from "./entities/product-rating.entity";
-import { Review } from "./entities/review.entity";
-import { ConfigModule } from "@nestjs/config";
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Product } from './entities/product.entity';
+import { ProductRating } from './entities/product-rating.entity';
+import { Review } from './entities/review.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [

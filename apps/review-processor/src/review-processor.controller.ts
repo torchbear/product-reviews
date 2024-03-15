@@ -14,7 +14,10 @@ export class ReviewProcessorController {
   ) {}
 
   @MessagePattern('ratingUpdate')
-  async ratingUpdate(@Payload() productIds: number[], @Ctx() context: RmqContext) {
+  async ratingUpdate(
+    @Payload() productIds: number[],
+    @Ctx() context: RmqContext,
+  ) {
     await this.reviewProcessorService.ratingUpdate(productIds);
   }
 }

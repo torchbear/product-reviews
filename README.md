@@ -40,3 +40,11 @@ $ npm run test:cov
 - PATCH/PUT/DELETE in products/reviews controllers return directly DB results (hide them and return just HTTP code)
 - consider interceptor for caching https://docs.nestjs.com/interceptors#stream-overriding
 - extract entities to library to remove redundant definitions per app
+- caching
+- health checks
+- multistage docker build
+- tests
+- bootstrap UI for frontend
+- DB agnostic configuration
+- code-doc
+- codecov?

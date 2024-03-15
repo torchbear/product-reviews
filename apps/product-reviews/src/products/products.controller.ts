@@ -8,15 +8,11 @@ import {
   Delete,
   ParseIntPipe,
   ValidationPipe,
-  HttpStatus,
-  HttpException,
   Put,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { GetProductDto } from './dto/get-product.dto';
-import { Product } from './entities/product.entity';
 
 @Controller('products')
 export class ProductsController {
@@ -24,47 +20,21 @@ export class ProductsController {
 
   @Post()
   async create(@Body(new ValidationPipe()) createProductDto: CreateProductDto) {
-    return this.productsService
-      .create(createProductDto)
-      .then((result) => {
-        return { id: result.identifiers[0].id };
-      })
-      .catch(() => {
-        throw new HttpException(
-          'Create failed',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      });
+    return this.productsService.create(createProductDto);
   }
 
   @Get()
   async findAll() {
-    return this.productsService
-      .findAll()
-      .then((result) => {
-        return result.map((product) => {
-          return this._toDto(product);
-        });
-      })
-      .catch(() => {
-        throw new HttpException('Products not found', HttpStatus.NO_CONTENT);
-      });
+    return this.productsService.findAll();
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService
-      .findOne(id)
-      .then((result) => {
-        return this._toDto(result);
-      })
-      .catch(() => {
-        throw new HttpException('Product not found', HttpStatus.NO_CONTENT);
-      });
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) updateProductDto: UpdateProductDto,
   ) {
@@ -72,7 +42,7 @@ export class ProductsController {
   }
 
   @Put(':id')
-  put(
+  async put(
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) createProductDto: CreateProductDto,
   ) {
@@ -80,19 +50,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService.remove(id).catch(() => {
-      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
-    });
-  }
-
-  _toDto(product: Product) {
-    const productDto = new GetProductDto();
-    productDto.id = product.id;
-    productDto.name = product.name;
-    productDto.description = product.description;
-    productDto.price = product.price;
-    productDto.rating = product.rating?.rating;
-    return productDto;
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.remove(id);
   }
 }

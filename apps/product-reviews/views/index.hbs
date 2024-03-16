@@ -1,19 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>App</title>
+    <!-- Latest compiled and minified bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
   </head>
   <body>
-    <h1>Reviews</h1>
-    </hr>
-    {{#each reviews}}
-    <p>
-      <b>Author:</b> {{ this.firstName }} {{ this.lastName }}</br>
-      <b>Product:</b> {{ this.product.name }}</br>
-      <b>Rating:</b> {{ this.rating }}</br>
-      <span>{{ this.text }}</span>
-    </p>
-    {{/each}}
+  <div class="panel panel-default">
+    <div class="panel-heading">Products & Reviews</div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Rating</th>
+          <th>Reviews</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#products}}
+        <tr>
+          <td>{{ name }}</td>
+          <td>{{ description }}</td>
+          <td>{{ price }}</td>
+          <td>{{ rating }}</td>
+          <td>
+            <ul>
+              {{#reviews}}
+              <li><strong>{{ firstName }} {{ lastName }}</strong> (Rating: {{ rating }}): {{ text }}</li>
+              {{/reviews}}
+            </ul>
+          </td>
+        </tr>
+        {{/products}}
+      </tbody>
+    </table>
+  </div>
   </body>
 </html>

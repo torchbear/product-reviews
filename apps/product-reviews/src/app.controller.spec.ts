@@ -5,6 +5,8 @@ import { ReviewsService } from './reviews/reviews.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Review } from './reviews/entities/review.entity';
 import { Repository } from 'typeorm';
+import { ProductsService } from './products/products.service';
+import { Product } from './products/entities/product.entity';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -20,6 +22,14 @@ describe('AppController', () => {
         },
         {
           provide: getRepositoryToken(Review),
+          useClass: Repository,
+        },
+        {
+          provide: ProductsService,
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(Product),
           useClass: Repository,
         },
       ],

@@ -14,7 +14,10 @@ describe('AppController', () => {
       controllers: [AppController],
       providers: [
         AppService,
-        ReviewsService,
+        {
+          provide: ReviewsService,
+          useValue: {},
+        },
         {
           provide: getRepositoryToken(Review),
           useClass: Repository,

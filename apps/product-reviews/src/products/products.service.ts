@@ -69,26 +69,29 @@ export class ProductsService {
     if (existingProduct == null) {
       return null;
     }
-    const product = new Product();
-    product.id = id;
+    const newProduct = new Product();
+    newProduct.id = id;
     if (updateProductDto.name != null) {
-      product.name = updateProductDto.name;
+      newProduct.name = updateProductDto.name;
     }
     if (updateProductDto.description != null) {
-      product.description = updateProductDto.description;
+      newProduct.description = updateProductDto.description;
     }
     if (updateProductDto.price != null) {
-      product.price = updateProductDto.price;
+      newProduct.price = updateProductDto.price;
     }
-    const update = await this.productsRepository.save(product);
+    const update = await this.productsRepository.save(newProduct);
     await this._invalidateCache(id);
     return this._toDto(Object.assign(existingProduct, update));
   }
 
   async remove(id: number) {
     const remove = await this.productsRepository.delete(id);
-    await this._invalidateCache(id);
-    return remove.affected > 0;
+    if (remove.affected > 0) {
+      await this._invalidateCache(id);
+      return true;
+    }
+    return false;
   }
 
   _toDto(product: Product) {

@@ -35,16 +35,12 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## TODOs
-- return proper HTTP codes based on https://docs.devland.is/technical-overview/api-design-guide/rest-response
-- PATCH/PUT/DELETE in products/reviews controllers return directly DB results (hide them and return just HTTP code)
-- consider interceptor for caching https://docs.nestjs.com/interceptors#stream-overriding
+## Optional TODOs
 - extract entities to library to remove redundant definitions per app
-- caching
-- health checks
-- multistage docker build
-- tests
+- health checks to be used in k8s
 - bootstrap UI for frontend
-- DB agnostic configuration
 - code-doc
-- codecov?
+
+TO doc:
+- swagger
+- 

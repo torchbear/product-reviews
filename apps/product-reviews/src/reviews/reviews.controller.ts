@@ -11,7 +11,7 @@ import {
   Put,
   NotFoundException,
 } from '@nestjs/common';
-import { ProductNotFoundError, ReviewsService } from "./reviews.service";
+import { ProductNotFoundError, ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 

@@ -36,9 +36,9 @@ describe('ReviewProcessorController', () => {
   describe('ratingUpdate', () => {
     it('should call ratingUpdate on reviewProcessorService', async () => {
       const productIds = [1, 2, 3];
-      expect(
-        await reviewProcessorController.ratingUpdate(productIds),
-      ).toBe(undefined);
+      expect(await reviewProcessorController.ratingUpdate(productIds)).toBe(
+        undefined,
+      );
       expect(reviewProcessorService.ratingUpdate).toHaveBeenCalledWith(
         productIds,
       );

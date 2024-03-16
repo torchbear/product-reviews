@@ -69,7 +69,7 @@ export class ProductsService {
     if (updateProductDto.price != null) {
       product.price = updateProductDto.price;
     }
-    const update = await this.productsRepository.update(id, product);
+    const update = await this.productsRepository.save(product);
     await this._invalidateCache(id);
     return update;
   }

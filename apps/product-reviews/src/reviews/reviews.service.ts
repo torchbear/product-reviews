@@ -85,17 +85,17 @@ export class ReviewsService {
       product.id = updateReviewDto.productId;
       review.product = product;
     }
-    const newReview = await this.findOne(id);
+    const oldReview = await this.findOne(id);
     let updatedProducts = [];
     if (
       updateReviewDto.productId != null &&
-      updateReviewDto.productId != newReview.productId
+      updateReviewDto.productId != oldReview.productId
     ) {
-      updatedProducts = [newReview.productId, updateReviewDto.productId];
+      updatedProducts = [oldReview.productId, updateReviewDto.productId];
     } else {
-      updatedProducts = [newReview.productId];
+      updatedProducts = [oldReview.productId];
     }
-    const update = await this.reviewsRepository.update(id, newReview);
+    const update = await this.reviewsRepository.save(review);
     this.client.emit('ratingUpdate', updatedProducts);
     await this._invalidateCache(id);
     return update;

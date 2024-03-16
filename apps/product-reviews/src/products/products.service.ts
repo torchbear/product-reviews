@@ -25,11 +25,13 @@ export class ProductsService {
     product.price = createProductDto.price;
     const create = await this.productsRepository.insert(product);
     await this.cacheService.del('products');
-    return { id: create.identifiers[0].id };
+    product.id = create.identifiers[0].id;
+    return this._toDto(product);
   }
 
   async findAll() {
-    const cachedProducts = await this.cacheService.get('products');
+    const cachedProducts =
+      await this.cacheService.get<GetProductDto[]>('products');
     if (cachedProducts) {
       return plainToInstance(GetProductDto, cachedProducts);
     }
@@ -44,7 +46,9 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    const cachedProduct = await this.cacheService.get(`product_${id}`);
+    const cachedProduct = await this.cacheService.get<GetProductDto>(
+      `product_${id}`,
+    );
     if (cachedProduct) {
       return plainToInstance(GetProductDto, cachedProduct);
     }
@@ -52,12 +56,19 @@ export class ProductsService {
       where: { id: id },
       relations: ['rating'],
     });
+    if (product == null) {
+      return null;
+    }
     const product_dto = this._toDto(product);
     await this.cacheService.set(`product_${id}`, instanceToPlain(product_dto));
     return product_dto;
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
+    const existingProduct = await this.findOne(id);
+    if (existingProduct == null) {
+      return null;
+    }
     const product = new Product();
     product.id = id;
     if (updateProductDto.name != null) {
@@ -71,13 +82,13 @@ export class ProductsService {
     }
     const update = await this.productsRepository.save(product);
     await this._invalidateCache(id);
-    return update;
+    return this._toDto(Object.assign(existingProduct, update));
   }
 
   async remove(id: number) {
     const remove = await this.productsRepository.delete(id);
     await this._invalidateCache(id);
-    return remove;
+    return remove.affected > 0;
   }
 
   _toDto(product: Product) {

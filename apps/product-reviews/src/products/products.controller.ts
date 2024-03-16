@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   ValidationPipe,
   Put,
+  NotFoundException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -30,7 +31,11 @@ export class ProductsController {
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService.findOne(id);
+    const findOneResult = await this.productsService.findOne(id);
+    if (findOneResult == null) {
+      throw new NotFoundException();
+    }
+    return findOneResult;
   }
 
   @Patch(':id')
@@ -38,7 +43,14 @@ export class ProductsController {
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) updateProductDto: UpdateProductDto,
   ) {
-    return this.productsService.update(id, updateProductDto);
+    const updateResult = await this.productsService.update(
+      id,
+      updateProductDto,
+    );
+    if (updateResult == null) {
+      throw new NotFoundException();
+    }
+    return updateResult;
   }
 
   @Put(':id')
@@ -46,11 +58,22 @@ export class ProductsController {
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) createProductDto: CreateProductDto,
   ) {
-    return this.productsService.update(id, createProductDto);
+    const updateResult = await this.productsService.update(
+      id,
+      createProductDto,
+    );
+    if (updateResult == null) {
+      throw new NotFoundException();
+    }
+    return updateResult;
   }
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService.remove(id);
+    const removeResult = await this.productsService.remove(id);
+    if (!removeResult) {
+      throw new NotFoundException();
+    }
+    return;
   }
 }

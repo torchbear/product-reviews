@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReviewsController } from './reviews.controller';
-import { ReviewsService } from './reviews.service';
+import { ProductNotFoundError, ReviewsService } from './reviews.service';
 import { NotFoundException } from '@nestjs/common';
 import { Review } from './entities/review.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -86,6 +86,18 @@ describe('ReviewsController', () => {
   describe('create', () => {
     it('should create a review', async () => {
       expect(await reviewsController.create(createReviewDto)).toEqual(review);
+      expect(reviewsService.create).toHaveBeenCalledWith(createReviewDto);
+    });
+
+    it('should throw an exception for invalid product', async () => {
+      mockReviewsService['create'] = jest
+        .fn()
+        .mockRejectedValueOnce(
+          new ProductNotFoundError('Product does not exist'),
+        );
+      await expect(reviewsController.create(createReviewDto)).rejects.toThrow(
+        NotFoundException,
+      );
       expect(reviewsService.create).toHaveBeenCalledWith(createReviewDto);
     });
   });

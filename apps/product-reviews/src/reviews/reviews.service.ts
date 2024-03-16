@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InsertResult, Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
 import { Product } from '../products/entities/product.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -10,6 +10,13 @@ import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Cache } from 'cache-manager';
 import { GetReviewDto } from './dto/get-review.dto';
 import { ClientProxy } from '@nestjs/microservices';
+
+export class ProductNotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ProductNotFoundError';
+  }
+}
 
 @Injectable()
 export class ReviewsService {
@@ -31,7 +38,16 @@ export class ReviewsService {
     const product = new Product();
     product.id = createReviewDto.productId;
     review.product = product;
-    const create = await this.reviewsRepository.insert(review);
+    let create: InsertResult;
+    try {
+      create = await this.reviewsRepository.insert(review);
+    } catch (error) {
+      if (error.errno === 1452) {
+        throw new ProductNotFoundError('Product does not exist');
+      } else {
+        throw error;
+      }
+    }
     this.client.emit('ratingUpdate', [product.id]);
     review.id = create.identifiers[0].id;
     await this.cacheService.del('reviews');

@@ -11,7 +11,7 @@ import {
   Put,
   NotFoundException,
 } from '@nestjs/common';
-import { ReviewsService } from './reviews.service';
+import { ProductNotFoundError, ReviewsService } from "./reviews.service";
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 
@@ -21,7 +21,13 @@ export class ReviewsController {
 
   @Post()
   async create(@Body(new ValidationPipe()) createReviewDto: CreateReviewDto) {
-    return this.reviewsService.create(createReviewDto);
+    return this.reviewsService.create(createReviewDto).catch((error) => {
+      if (error instanceof ProductNotFoundError) {
+        throw new NotFoundException('Product not found');
+      } else {
+        throw error;
+      }
+    });
   }
 
   @Get()

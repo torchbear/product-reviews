@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ReviewsService } from './reviews.service';
+import { ProductNotFoundError, ReviewsService } from './reviews.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { InsertResult, Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
@@ -115,6 +115,20 @@ describe('ReviewsService', () => {
       );
       expect(reviewRepository.insert).toHaveBeenCalledWith(review);
       expect(cacheService.del).toHaveBeenCalledWith('reviews');
+    });
+
+    it('should throw an exception for invalid product', async () => {
+      mockReviewRepository['insert'] = jest.fn().mockRejectedValueOnce({
+        errno: 1452,
+      });
+      await expect(reviewsService.create(createReviewDto)).rejects.toThrow(
+        ProductNotFoundError,
+      );
+      // do a clone because of issues with side effects based on https://github.com/jestjs/jest/issues/434 :/
+      const reviewCopy: Review = { ...review };
+      reviewCopy.id = undefined;
+      expect(reviewRepository.insert).toHaveBeenCalledWith(reviewCopy);
+      expect(cacheService.del).not.toHaveBeenCalled();
     });
   });
 

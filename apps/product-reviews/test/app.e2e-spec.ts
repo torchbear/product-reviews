@@ -15,18 +15,11 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
-  });
-
-  it('/products/blah (GET) fails on invalid non-number ID', () => {
+  it('GET /products/blah fails on invalid non-number ID', () => {
     return request(app.getHttpServer()).get('/products/blah').expect(400);
   });
 
-  it('/reviews/blah (GET) fails on invalid non-number ID', () => {
+  it('GET /reviews/blah fails on invalid non-number ID', () => {
     return request(app.getHttpServer()).get('/reviews/blah').expect(400);
   });
 

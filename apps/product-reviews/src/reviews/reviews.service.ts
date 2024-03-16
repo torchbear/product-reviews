@@ -32,8 +32,9 @@ export class ReviewsService {
     product.id = createReviewDto.productId;
     review.product = product;
     const create = await this.reviewsRepository.insert(review);
-    await this.cacheService.del('reviews');
+    this.client.emit('ratingUpdate', [product.id]);
     review.id = create.identifiers[0].id;
+    await this.cacheService.del('reviews');
     return this._toDto(review);
   }
 

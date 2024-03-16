@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   ValidationPipe,
   Put,
+  NotFoundException,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -30,7 +31,11 @@ export class ReviewsController {
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.reviewsService.findOne(id);
+    const findOneResult = await this.reviewsService.findOne(id);
+    if (findOneResult == null) {
+      throw new NotFoundException();
+    }
+    return findOneResult;
   }
 
   @Patch(':id')
@@ -38,7 +43,11 @@ export class ReviewsController {
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) updateReviewDto: UpdateReviewDto,
   ) {
-    return this.reviewsService.update(id, updateReviewDto);
+    const updateResult = await this.reviewsService.update(id, updateReviewDto);
+    if (updateResult == null) {
+      throw new NotFoundException();
+    }
+    return updateResult;
   }
 
   @Put(':id')
@@ -46,11 +55,19 @@ export class ReviewsController {
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) createReviewDto: CreateReviewDto,
   ) {
-    return this.reviewsService.update(id, createReviewDto);
+    const updateResult = await this.reviewsService.update(id, createReviewDto);
+    if (updateResult == null) {
+      throw new NotFoundException();
+    }
+    return updateResult;
   }
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    return this.reviewsService.remove(id);
+    const removeResult = await this.reviewsService.remove(id);
+    if (!removeResult) {
+      throw new NotFoundException();
+    }
+    return;
   }
 }

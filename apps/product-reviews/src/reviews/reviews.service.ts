@@ -52,7 +52,9 @@ export class ReviewsService {
   }
 
   async findOne(id: number) {
-    const cachedReview = await this.cacheService.get(`review_${id}`);
+    const cachedReview = await this.cacheService.get<GetReviewDto>(
+      `review_${id}`,
+    );
     if (cachedReview) {
       return plainToInstance(GetReviewDto, cachedReview);
     }
@@ -60,53 +62,60 @@ export class ReviewsService {
       where: { id: id },
       relations: ['product'],
     });
+    if (review == null) {
+      return null;
+    }
     const review_dto = this._toDto(review);
     await this.cacheService.set(`review_${id}`, instanceToPlain(review_dto));
     return review_dto;
   }
 
   async update(id: number, updateReviewDto: UpdateReviewDto) {
-    const review = new Review();
-    review.id = id;
+    const existingReview = await this.findOne(id);
+    if (existingReview == null) {
+      return null;
+    }
+    const newReview = new Review();
+    newReview.id = id;
     if (updateReviewDto.firstName != null) {
-      review.firstName = updateReviewDto.firstName;
+      newReview.firstName = updateReviewDto.firstName;
     }
     if (updateReviewDto.lastName != null) {
-      review.lastName = updateReviewDto.lastName;
+      newReview.lastName = updateReviewDto.lastName;
     }
     if (updateReviewDto.text != null) {
-      review.text = updateReviewDto.text;
+      newReview.text = updateReviewDto.text;
     }
     if (updateReviewDto.rating != null) {
-      review.rating = updateReviewDto.rating;
+      newReview.rating = updateReviewDto.rating;
     }
     if (updateReviewDto.productId != null) {
       const product = new Product();
       product.id = updateReviewDto.productId;
-      review.product = product;
+      newReview.product = product;
     }
-    const oldReview = await this.findOne(id);
     let updatedProducts = [];
     if (
       updateReviewDto.productId != null &&
-      updateReviewDto.productId != oldReview.productId
+      updateReviewDto.productId != existingReview.productId
     ) {
-      updatedProducts = [oldReview.productId, updateReviewDto.productId];
+      updatedProducts = [existingReview.productId, updateReviewDto.productId];
     } else {
-      updatedProducts = [oldReview.productId];
+      updatedProducts = [existingReview.productId];
     }
-    const update = await this.reviewsRepository.save(review);
+    const update = await this.reviewsRepository.save(newReview);
     this.client.emit('ratingUpdate', updatedProducts);
     await this._invalidateCache(id);
-    return update;
+    return this._toDto(Object.assign(existingReview, update));
   }
 
   async remove(id: number) {
-    const review = await this.findOne(id);
     const remove = await this.reviewsRepository.delete(id);
-    this.client.emit('ratingUpdate', [review.productId]);
-    await this._invalidateCache(id);
-    return remove;
+    if (remove.affected > 0) {
+      this.client.emit('ratingUpdate', [id]);
+      await this._invalidateCache(id);
+      return true;
+    }
   }
 
   _toDto(review: Review) {

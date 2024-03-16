@@ -33,6 +33,12 @@ describe('ProductsService', () => {
   getProductDto.description = product.description;
   getProductDto.price = product.price;
 
+  const getProductDtoAfterUpdate = new GetProductDto();
+  getProductDtoAfterUpdate.id = product.id;
+  getProductDtoAfterUpdate.name = product.name;
+  getProductDtoAfterUpdate.description = product.description;
+  getProductDtoAfterUpdate.price = updatedProduct.price;
+
   const updateProductDto = new UpdateProductDto();
   updateProductDto.price = product.price + 100;
 
@@ -143,7 +149,7 @@ describe('ProductsService', () => {
         .spyOn(productService, 'findOne')
         .mockResolvedValueOnce(getProductDto);
       expect(await productService.update(product.id, updateProductDto)).toEqual(
-        updatedProduct,
+        getProductDtoAfterUpdate,
       );
       const updatedProductWithId = new Product();
       updatedProductWithId.id = product.id;

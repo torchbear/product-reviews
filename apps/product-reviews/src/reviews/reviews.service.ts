@@ -33,11 +33,13 @@ export class ReviewsService {
     review.product = product;
     const create = await this.reviewsRepository.insert(review);
     await this.cacheService.del('reviews');
-    return { id: create.identifiers[0].id };
+    review.id = create.identifiers[0].id;
+    return this._toDto(review);
   }
 
   async findAll() {
-    const cachedReviews = await this.cacheService.get('reviews');
+    const cachedReviews =
+      await this.cacheService.get<GetReviewDto[]>('reviews');
     if (cachedReviews) {
       return plainToInstance(GetReviewDto, cachedReviews);
     }
@@ -116,6 +118,7 @@ export class ReviewsService {
       await this._invalidateCache(id);
       return true;
     }
+    return false;
   }
 
   _toDto(review: Review) {

@@ -1,11 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { ReviewProcessorService } from './review-processor.service';
-import {
-  Ctx,
-  MessagePattern,
-  Payload,
-  RmqContext,
-} from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller()
 export class ReviewProcessorController {
@@ -14,10 +9,7 @@ export class ReviewProcessorController {
   ) {}
 
   @MessagePattern('ratingUpdate')
-  async ratingUpdate(
-    @Payload() productIds: number[],
-    @Ctx() context: RmqContext,
-  ) {
+  async ratingUpdate(@Payload() productIds: number[]) {
     await this.reviewProcessorService.ratingUpdate(productIds);
   }
 }

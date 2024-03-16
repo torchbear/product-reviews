@@ -7,6 +7,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build product-reviews && nest build review-processor",
+    "build:product-reviews": "nest build product-reviews",
+    "build:review-processor": "nest build review-processor",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start:product-reviews": "nest start product-reviews",
     "start:dev": "concurrently -c \"blue.bold,green.bold\" \"npm run start:dev:*\"",
@@ -17,6 +19,8 @@
     "start:prod:review-processor": "node dist/apps/review-processor/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
+    "test:product-reviews": "jest apps/product-reviews/**/*",
+    "test:review-processor": "jest apps/review-processor/**/*",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

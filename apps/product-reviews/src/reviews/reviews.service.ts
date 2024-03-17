@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { InsertResult, Repository } from 'typeorm';
+import { DeleteResult, InsertResult, Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
 import { Product } from '../products/entities/product.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -11,6 +11,9 @@ import { Cache } from 'cache-manager';
 import { GetReviewDto } from './dto/get-review.dto';
 import { ClientProxy } from '@nestjs/microservices';
 
+/**
+ * Product not found error custom class
+ */
 export class ProductNotFoundError extends Error {
   constructor(message: string) {
     super(message);
@@ -18,8 +21,19 @@ export class ProductNotFoundError extends Error {
   }
 }
 
+/**
+ * Reviews service class
+ * Handles all the business logic for reviews
+ */
 @Injectable()
 export class ReviewsService {
+  /**
+   * ReviewsService constructor
+   *
+   * @param {Repository<Review>} reviewsRepository reviews repository
+   * @param {Cache} cacheService cache service
+   * @param {ClientProxy} client message broker client
+   */
   constructor(
     @InjectRepository(Review)
     private reviewsRepository: Repository<Review>,
@@ -29,13 +43,20 @@ export class ReviewsService {
     private client: ClientProxy,
   ) {}
 
-  async create(createReviewDto: CreateReviewDto) {
-    const review = new Review();
+  /**
+   * Creates a review and invalidates the cache and emits a message to update the rating
+   *
+   * @param {CreateReviewDto} createReviewDto review data
+   * @throws {ProductNotFoundError} if the product does not exist
+   * @returns {Promise<GetReviewDto>} created review
+   */
+  async create(createReviewDto: CreateReviewDto): Promise<GetReviewDto> {
+    const review: Review = new Review();
     review.firstName = createReviewDto.firstName;
     review.lastName = createReviewDto.lastName;
     review.text = createReviewDto.text;
     review.rating = createReviewDto.rating;
-    const product = new Product();
+    const product: Product = new Product();
     product.id = createReviewDto.productId;
     review.product = product;
     let create: InsertResult;
@@ -54,47 +75,66 @@ export class ReviewsService {
     return this._toDto(review);
   }
 
-  async findAll() {
-    const cachedReviews =
+  /**
+   * Finds all reviews and caches the result
+   *
+   * @returns {Promise<GetReviewDto[]>} reviews
+   */
+  async findAll(): Promise<GetReviewDto[]> {
+    const cachedReviews: GetReviewDto[] =
       await this.cacheService.get<GetReviewDto[]>('reviews');
     if (cachedReviews) {
       return plainToInstance(GetReviewDto, cachedReviews);
     }
-    const reviews = await this.reviewsRepository.find({
+    const reviews: Review[] = await this.reviewsRepository.find({
       relations: ['product'],
     });
-    const reviews_dto = reviews.map((result) => {
+    const reviews_dto: GetReviewDto[] = reviews.map((result: Review) => {
       return this._toDto(result);
     });
     await this.cacheService.set('reviews', instanceToPlain(reviews_dto));
     return reviews_dto;
   }
 
-  async findOne(id: number) {
-    const cachedReview = await this.cacheService.get<GetReviewDto>(
-      `review_${id}`,
-    );
+  /**
+   * Finds a review by id and caches the result
+   *
+   * @param {number} id review id
+   * @returns {Promise<GetReviewDto>} review or null if the review does not exist
+   */
+  async findOne(id: number): Promise<GetReviewDto> {
+    const cachedReview: GetReviewDto =
+      await this.cacheService.get<GetReviewDto>(`review_${id}`);
     if (cachedReview) {
       return plainToInstance(GetReviewDto, cachedReview);
     }
-    const review = await this.reviewsRepository.findOne({
+    const review: Review = await this.reviewsRepository.findOne({
       where: { id: id },
       relations: ['product'],
     });
     if (review == null) {
       return null;
     }
-    const review_dto = this._toDto(review);
+    const review_dto: GetReviewDto = this._toDto(review);
     await this.cacheService.set(`review_${id}`, instanceToPlain(review_dto));
     return review_dto;
   }
 
-  async update(id: number, updateReviewDto: UpdateReviewDto) {
-    const existingReview = await this.findOne(id);
+  /**
+   * Updates a review by id and invalidates the cache and emits a message to update the rating
+   *
+   * @param {number} id review id
+   * @param {UpdateReviewDto} updateReviewDto data to update or null if the review does not exist
+   */
+  async update(
+    id: number,
+    updateReviewDto: UpdateReviewDto,
+  ): Promise<GetReviewDto> {
+    const existingReview: GetReviewDto = await this.findOne(id);
     if (existingReview == null) {
       return null;
     }
-    const newReview = new Review();
+    const newReview: Review = new Review();
     newReview.id = id;
     if (updateReviewDto.firstName != null) {
       newReview.firstName = updateReviewDto.firstName;
@@ -109,7 +149,7 @@ export class ReviewsService {
       newReview.rating = updateReviewDto.rating;
     }
     if (updateReviewDto.productId != null) {
-      const product = new Product();
+      const product: Product = new Product();
       product.id = updateReviewDto.productId;
       newReview.product = product;
     }
@@ -122,14 +162,20 @@ export class ReviewsService {
     } else {
       updatedProducts = [existingReview.productId];
     }
-    const update = await this.reviewsRepository.save(newReview);
+    const update: Review = await this.reviewsRepository.save(newReview);
     this.client.emit('ratingUpdate', updatedProducts);
     await this._invalidateCache(id);
     return this._toDto(Object.assign(existingReview, update));
   }
 
-  async remove(id: number) {
-    const remove = await this.reviewsRepository.delete(id);
+  /**
+   * Removes a review by id and invalidates the cache and emits a message to update the rating
+   *
+   * @param {number} id review id
+   * @returns {Promise<boolean>} true if the review was removed, false otherwise
+   */
+  async remove(id: number): Promise<boolean> {
+    const remove: DeleteResult = await this.reviewsRepository.delete(id);
     if (remove.affected > 0) {
       this.client.emit('ratingUpdate', [id]);
       await this._invalidateCache(id);
@@ -138,8 +184,14 @@ export class ReviewsService {
     return false;
   }
 
-  _toDto(review: Review) {
-    const reviewDto = new GetReviewDto();
+  /**
+   * Converts a Review to GetReviewDto
+   *
+   * @param {Review} review review
+   * @returns {GetReviewDto} review dto
+   */
+  _toDto(review: Review): GetReviewDto {
+    const reviewDto: GetReviewDto = new GetReviewDto();
     reviewDto.id = review.id;
     reviewDto.firstName = review.firstName;
     reviewDto.lastName = review.lastName;
@@ -149,7 +201,12 @@ export class ReviewsService {
     return reviewDto;
   }
 
-  async _invalidateCache(id: number) {
+  /**
+   * Invalidates the cache for a review by id and the list of reviews
+   * @param {number} id review id
+   * @returns {Promise<void>}
+   */
+  async _invalidateCache(id: number): Promise<void> {
     await this.cacheService.del('reviews');
     await this.cacheService.del(`review_${id}`);
   }

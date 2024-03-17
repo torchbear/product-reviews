@@ -6,9 +6,21 @@ import { Product } from './entities/product.entity';
 import { ProductRating } from './entities/product-rating.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { ReviewsService } from '../../product-reviews/src/reviews/reviews.service';
 
+/**
+ * ReviewProcessorService class
+ * Handles product rating updates
+ */
 @Injectable()
 export class ReviewProcessorService {
+  /**
+   * ReviewProcessorService constructor
+   *
+   * @param {Repository<Review>} reviewsRepository reviews repository
+   * @param {Repository<ProductRating>} productRatingRepository product rating repository
+   * @param {Cache} cacheService cache service
+   */
   constructor(
     @InjectRepository(Review)
     private reviewsRepository: Repository<Review>,
@@ -18,11 +30,18 @@ export class ReviewProcessorService {
     private cacheService: Cache,
   ) {}
 
-  async ratingUpdate(productIds: number[]) {
+  /**
+   * Updates the rating for the given product IDs
+   * Calculates the average product rating and stores it in the database
+   *
+   * @param {number[]} productIds product IDs
+   * @returns {Promise<void>}
+   */
+  async ratingUpdate(productIds: number[]): Promise<void> {
     for (const productId of productIds) {
-      const product = new Product();
+      const product: Product = new Product();
       product.id = productId;
-      const reviews = await this.reviewsRepository.find({
+      const reviews: Review[] = await this.reviewsRepository.find({
         where: { product: product },
       });
       if (reviews.length === 0) {

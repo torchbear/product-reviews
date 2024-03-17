@@ -7,7 +7,7 @@ ConfigModule.forRoot({
   envFilePath: ['.env.development', '.env.development.docker'],
 });
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     ReviewProcessorModule,
     {

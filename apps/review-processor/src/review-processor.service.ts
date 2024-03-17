@@ -6,7 +6,6 @@ import { Product } from './entities/product.entity';
 import { ProductRating } from './entities/product-rating.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { ReviewsService } from '../../product-reviews/src/reviews/reviews.service';
 
 /**
  * ReviewProcessorService class

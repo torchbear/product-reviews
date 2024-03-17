@@ -90,6 +90,12 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+
+# lint
+$ npm run lint
+
+# formatting
+$ npm run format
 ```
 
 ## Documentation

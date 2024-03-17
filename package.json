@@ -9,6 +9,7 @@
     "build": "nest build product-reviews && nest build review-processor",
     "build:product-reviews": "nest build product-reviews",
     "build:review-processor": "nest build review-processor",
+    "compodoc": "npx compodoc -p tsconfig.doc.json",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start:product-reviews": "nest start product-reviews",
     "start:dev": "concurrently -c \"blue.bold,green.bold\" \"npm run start:dev:*\"",
@@ -50,6 +51,7 @@
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
+    "@compodoc/compodoc": "^1.1.23",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",

@@ -1,0 +1,4 @@
+{
+  "include": ["apps/product-reviews/src/**/*.ts", "apps/review-processor/src/**/*.ts"],
+  "exclude": ["src/test.ts", "src/**/*.spec.ts", "src/app/file-to-exclude.ts"]
+}

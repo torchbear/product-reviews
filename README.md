@@ -54,7 +54,7 @@ $ npm install
 
 ```bash
 # start dependencies
-$ docker-compose up -d mysql rabbitmq redis
+$ docker-compose up -d db rabbitmq redis
 
 # start product-reviews service
 $ npm run start:product-reviews

@@ -4,6 +4,7 @@ import { join } from 'path';
 import { LoggingInterceptor } from './logging.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { VersioningType } from "@nestjs/common";
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -13,6 +14,11 @@ async function bootstrap(): Promise<void> {
     .setTitle('Product reviews API')
     .setVersion('1.0')
     .build();
+
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 

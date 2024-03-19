@@ -15,13 +15,17 @@ import { ProductNotFoundError, ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { GetReviewDto } from './dto/get-review.dto';
+import { prefix } from "concurrently/dist/src/defaults";
 
 /**
  * Reviews controller class
  * Handles all the requests related to reviews
  * Provides REST API for reviews
  */
-@Controller('reviews')
+@Controller({
+  path: 'reviews',
+  version: '1',
+})
 export class ReviewsController {
   /**
    * ReviewsController constructor

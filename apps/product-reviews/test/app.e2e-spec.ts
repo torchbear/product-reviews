@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, VersioningType } from "@nestjs/common";
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
@@ -12,27 +12,32 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+
+    app.enableVersioning({
+      type: VersioningType.URI,
+    });
+
     await app.init();
   });
 
-  it('GET /products/blah fails on invalid non-number ID', () => {
-    return request(app.getHttpServer()).get('/products/blah').expect(400);
+  it('GET /v1/products/blah fails on invalid non-number ID', () => {
+    return request(app.getHttpServer()).get('/v1/products/blah').expect(400);
   });
 
-  it('GET /reviews/blah fails on invalid non-number ID', () => {
-    return request(app.getHttpServer()).get('/reviews/blah').expect(400);
+  it('GET /v1/reviews/blah fails on invalid non-number ID', () => {
+    return request(app.getHttpServer()).get('/v1/reviews/blah').expect(400);
   });
 
   it('create product with supported fields', () => {
     return request(app.getHttpServer())
-      .post('/products')
+      .post('/v1/products')
       .send({ name: 'test', description: 'test', price: 1 })
       .expect(201);
   });
 
   it('create product with missing field', () => {
     return request(app.getHttpServer())
-      .post('/products')
+      .post('/v1/products')
       .send({ name: 'test', description: 'test' })
       .expect(400);
   });

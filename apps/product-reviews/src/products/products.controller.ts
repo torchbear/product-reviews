@@ -21,7 +21,10 @@ import { GetProductDto } from './dto/get-product.dto';
  * Handles all the requests related to products
  * Provides REST API for products
  */
-@Controller('products')
+@Controller({
+  path: 'products',
+  version: '1',
+})
 export class ProductsController {
   /**
    * ProductsController constructor
